@@ -18,7 +18,7 @@
             margin: 0; 
             display: flex;
             flex-direction: column;
-            /* Menggunakan dvh agar tinggi layar dinamis di mobile */
+            /* Menggunakan dvh agar tinggi layar dinamis mengikuti UI browser mobile */
             height: 100dvh;
             overflow: hidden;
         }
@@ -35,10 +35,11 @@
         .slide { 
             display: none; 
             width: 100%;
-            max-width: 1024px;
-            max-height: 80dvh; /* Membatasi tinggi kartu agar tidak menabrak footer */
-            transition: all 0.5s ease; 
-            overflow-y: auto; /* Memungkinkan scroll internal jika konten panjang */
+            max-width: 800px;
+            /* Maksimal tinggi slide agar ada ruang untuk footer di bawah */
+            max-height: 85%; 
+            transition: all 0.5s ease;
+            overflow-y: auto; /* Jika teks sangat panjang, bagian dalam kartu bisa di-scroll */
             -webkit-overflow-scrolling: touch;
         }
 
@@ -48,7 +49,7 @@
         }
         
         @keyframes slideIn {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
@@ -56,16 +57,16 @@
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(15px);
             border: 4px solid #ffffff;
-            border-radius: 40px;
-            box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+            border-radius: 35px;
+            box-shadow: 15px 15px 40px rgba(0,0,0,0.05);
             width: 100%;
             margin: auto;
         }
 
         .floating-icon { animation: floating 3s ease-in-out infinite; }
         @keyframes floating {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-15px) rotate(5deg); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .btn-nav { 
@@ -73,26 +74,24 @@
             border: 2px solid #e2e8f0; 
             padding: 0.8rem; 
             border-radius: 9999px; 
-            transition: 0.3s; 
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 50px;
-            height: 50px;
         }
-        .btn-nav:hover:not(:disabled) { background: #f8fafc; transform: scale(1.1); border-color: #cbd5e1; }
-        .btn-nav:disabled { opacity: 0.2; cursor: not-allowed; }
+        .btn-nav:disabled { opacity: 0.2; }
 
         footer {
-            padding: 1rem 2rem;
-            /* Area aman untuk tombol home di iPhone/Android modern */
-            padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+            padding: 1rem 1.5rem;
+            /* Memberikan ruang aman untuk gesture bar pada iPhone/Android modern */
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom)); 
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--bg-color);
             width: 100%;
-            max-width: 1024px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
@@ -101,69 +100,60 @@
         .theme-collect { background-color: #FFEBEE; }
         .theme-thanks { background-color: #F5F5F5; }
 
-        /* Penyesuaian Mobile */
+        /* Penyesuaian khusus Mobile */
         @media (max-width: 640px) {
-            .pastel-card { border-radius: 30px; padding: 2rem 1.5rem !important; }
-            h1 { font-size: 2.5rem !important; line-height: 1.2 !important; }
-            .slide-text-main { font-size: 1.5rem !important; }
-            .slide-text-sub { font-size: 1rem !important; }
+            h1 { font-size: 2.25rem !important; line-height: 1.2 !important; }
+            .slide-text-main { font-size: 1.25rem !important; }
+            .pastel-card { padding: 2rem 1.25rem !important; border-radius: 30px; }
+            .app-desc-box { padding: 1rem !important; }
         }
     </style>
 </head>
 <body>
 
     <main>
-        <div class="slide theme-title pastel-card p-12 flex-col items-center justify-center text-center">
-            <i class="fa-solid fa-laptop-code text-blue-500 text-6xl md:text-7xl mb-6 floating-icon"></i>
-            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-800 mb-4 tracking-tight">Koding Festival</h1>
-            <p class="text-xl md:text-3xl font-semibold text-slate-500 uppercase tracking-wide slide-text-main">Siswa SMP IT Ummul Quro Depok</p>
+        <div class="slide theme-title pastel-card p-10 flex-col items-center justify-center text-center">
+            <i class="fa-solid fa-laptop-code text-blue-500 text-6xl mb-6 floating-icon"></i>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-800 mb-2">Koding Festival</h1>
+            <p class="text-lg md:text-2xl font-bold text-slate-400 uppercase tracking-widest slide-text-main">SMP IT Ummul Quro Depok</p>
         </div>
 
-        <div id="slide-group" class="slide theme-app pastel-card p-12 flex-col items-center justify-center text-center">
-            <div id="groupNum" class="text-teal-600 font-bold mb-2 uppercase tracking-widest text-xs md:text-sm"></div>
-            <div id="appIconContainer" class="text-5xl md:text-7xl mb-4 floating-icon"></div>
-            <h1 id="appName" class="text-3xl md:text-5xl font-extrabold text-slate-800 mb-4"></h1>
-            <p id="studentNames" class="text-lg md:text-2xl font-medium text-slate-600 mb-6 slide-text-sub"></p>
-            <div class="bg-white/50 p-4 md:p-6 rounded-3xl max-w-2xl mx-auto border-2 border-white">
+        <div id="slide-group" class="slide theme-app pastel-card p-10 flex-col items-center justify-center text-center">
+            <div id="groupNum" class="text-teal-600 font-bold mb-2 uppercase tracking-tighter text-xs"></div>
+            <div id="appIconContainer" class="text-6xl mb-4 floating-icon"></div>
+            <h1 id="appName" class="text-3xl md:text-5xl font-extrabold text-slate-800 mb-3"></h1>
+            <p id="studentNames" class="text-lg md:text-2xl font-medium text-slate-500 mb-6"></p>
+            <div class="bg-white/60 p-5 rounded-3xl border-2 border-white app-desc-box">
                 <p id="appDesc" class="text-base md:text-xl italic text-slate-700"></p>
             </div>
         </div>
 
-        <div class="slide theme-collect pastel-card p-8 md:p-10 flex-col">
-            <h2 class="text-3xl md:text-4xl font-extrabold text-rose-600 text-center mb-6">Pengumpulan Tugas 🚀</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                <div class="bg-white/60 p-5 rounded-3xl border-2 border-rose-200">
-                    <h3 class="text-lg font-bold mb-3 text-slate-800 border-b-2 border-rose-100 pb-2">Isi Folder:</h3>
-                    <ul class="space-y-2 text-sm md:text-base text-slate-700 font-medium">
-                        <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> Link App (MIT Gallery)</li>
-                        <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> Presentasi (PPT/Canva)</li>
-                        <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> Video Demo & Pitch Deck</li>
-                    </ul>
-                </div>
-
-                <div class="text-center">
-                    <p class="text-slate-400 text-[10px] font-bold uppercase mb-2">Google Drive Link:</p>
-                    <code class="block bg-white/80 p-2 rounded-xl mb-4 text-rose-600 border border-rose-100 text-[9px] font-mono break-all">https://drive.google.com/drive/folders/1l0fDAJUJFQUm2NG-7yrpp6wlmBzVOdwW?usp=sharing</code>
-                    
-                    <a href="https://drive.google.com/drive/folders/1l0fDAJUJFQUm2NG-7yrpp6wlmBzVOdwW?usp=sharing" target="_blank" class="inline-block bg-rose-500 text-white px-8 py-3 rounded-2xl font-bold shadow-lg hover:bg-rose-600 transition-all">
-                        <i class="fa-brands fa-google-drive mr-2"></i> Buka Drive
-                    </a>
-                </div>
+        <div class="slide theme-collect pastel-card p-8 flex-col text-center">
+            <h2 class="text-3xl font-extrabold text-rose-600 mb-6">Pengumpulan Tugas 🚀</h2>
+            <div class="text-left bg-white/50 p-5 rounded-2xl mb-6 border border-rose-100">
+                <p class="font-bold text-slate-800 mb-2 text-sm">Wajib dikumpulkan:</p>
+                <ul class="text-sm space-y-2 text-slate-600">
+                    <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> Link Aplikasi MIT Gallery</li>
+                    <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> File Presentasi (PPT/Canva)</li>
+                    <li><i class="fa-solid fa-check text-rose-500 mr-2"></i> Video Demo & Pitch Deck</li>
+                </ul>
             </div>
+            <a href="https://drive.google.com/drive/folders/1l0fDAJUJFQUm2NG-7yrpp6wlmBzVOdwW?usp=sharing" target="_blank" class="bg-rose-500 text-white w-full py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-all">
+                <i class="fa-brands fa-google-drive mr-2"></i> Buka Folder Drive
+            </a>
         </div>
 
         <div class="slide theme-thanks pastel-card p-12 flex-col items-center justify-center text-center">
-            <i class="fa-solid fa-heart text-rose-400 text-6xl md:text-7xl mb-6 floating-icon"></i>
-            <h1 class="text-4xl md:text-7xl font-extrabold text-slate-800 mb-4">Terima Kasih!</h1>
-            <p class="text-lg md:text-2xl text-slate-500">Semangat Koding Festival!</p>
+            <i class="fa-solid fa-heart text-rose-400 text-6xl mb-6 floating-icon"></i>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-800">Terima Kasih!</h1>
+            <p class="text-slate-400 font-bold mt-2">Selamat Berjuang!</p>
         </div>
     </main>
 
     <footer>
-        <button id="prevBtn" class="btn-nav"><i class="fa-solid fa-chevron-left text-slate-600 text-xl"></i></button>
-        <span id="slideIndicator" class="text-slate-400 font-bold text-sm md:text-lg font-mono">Slide 01 / 13</span>
-        <button id="nextBtn" class="btn-nav"><i class="fa-solid fa-chevron-right text-slate-600 text-xl"></i></button>
+        <button id="prevBtn" class="btn-nav"><i class="fa-solid fa-chevron-left text-slate-600"></i></button>
+        <span id="slideIndicator" class="text-slate-400 font-bold text-sm font-mono">01 / 13</span>
+        <button id="nextBtn" class="btn-nav"><i class="fa-solid fa-chevron-right text-slate-600"></i></button>
     </footer>
 
     <script>
@@ -177,16 +167,15 @@
             {n: "Kelompok 7", a: "Business Control", s: "Rafa dan Arya", d: "Untuk menghitung modal usaha", i: "fa-chart-line", c: "#f472b6"},
             {n: "Kelompok 8", a: "Bank Nugraha", s: "Navra dan Izzan", d: "Aplikasi perbankan masa depan", i: "fa-building-columns", c: "#a8a29e"},
             {n: "Kelompok 9", a: "Bank Farhan Mumtaz", s: "Farhan dan Ziyad", d: "Solusi perbankan syariah digital", i: "fa-vault", c: "#22d3ee"},
-            {n: "Kelompok 10", a: "Creative Project", s: "Fatan dan Itsar", d: "Aplikasi sedang dalam tahap pengembangan kreatif", i: "fa-rocket", c: "#f87171"}
+            {n: "Kelompok 10", a: "Creative Project", s: "Fatan dan Itsar", d: "Aplikasi sedang dikembangkan", i: "fa-rocket", c: "#f87171"}
         ];
 
         let currentSlide = 0;
-        const totalSlidesCount = 13; 
+        const totalSlidesCount = 13;
 
         function updateSlide() {
             const allSlides = document.querySelectorAll('.slide');
             const groupSlide = document.getElementById('slide-group');
-            
             allSlides.forEach(s => s.classList.remove('active'));
 
             if (currentSlide === 0) {
@@ -207,20 +196,15 @@
 
             document.getElementById('prevBtn').disabled = currentSlide === 0;
             document.getElementById('nextBtn').disabled = currentSlide === totalSlidesCount - 1;
-            document.getElementById('slideIndicator').innerText = `Slide ${(currentSlide + 1).toString().padStart(2, '0')} / ${totalSlidesCount}`;
+            document.getElementById('slideIndicator').innerText = `${(currentSlide + 1).toString().padStart(2, '0')} / ${totalSlidesCount}`;
             
-            // Scroll ke atas otomatis setiap ganti slide
-            document.querySelectorAll('.slide').forEach(s => s.scrollTop = 0);
+            // Reset scroll posisi slide ke atas setiap ganti halaman
+            allSlides.forEach(s => s.scrollTop = 0);
         }
 
         document.getElementById('nextBtn').addEventListener('click', () => { if(currentSlide < totalSlidesCount - 1) { currentSlide++; updateSlide(); } });
         document.getElementById('prevBtn').addEventListener('click', () => { if(currentSlide > 0) { currentSlide--; updateSlide(); } });
         
-        document.addEventListener('keydown', (e) => { 
-            if (e.key === "ArrowRight") document.getElementById('nextBtn').click();
-            if (e.key === "ArrowLeft") document.getElementById('prevBtn').click();
-        });
-
         updateSlide();
     </script>
 </body>
