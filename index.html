@@ -3,296 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koding Festival 2026 - Ummul Quro</title>
+    <title>Koding Festival 2026 - SMP IT Ummul Quro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfcf0; overflow: hidden; margin: 0; }
-        .slide { display: none; height: calc(100vh - 165px); width: 100%; }
-        .slide.active { display: flex; animation: slideIn 0.5s ease-out; flex-direction: column; justify-content: center; align-items: center; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .pastel-card { background: white; padding: 2rem; border-radius: 2.5rem; border: 1px solid #f1f1f1; box-shadow: 0 4px 20px rgba(0,0,0,0.02); max-width: 650px; width: 90%; text-align: center; position: relative; }
-
-        /* Styling elemen yang bisa diedit */
-        [contenteditable="true"] { transition: all 0.3s; border-radius: 8px; padding: 2px 4px; }
-        [contenteditable="true"]:hover { background-color: rgba(79, 70, 229, 0.05); outline: 2px dashed #4f46e5; cursor: text; }
-        [contenteditable="true"]:focus { background-color: white; outline: 2px solid #4f46e5; }
-
-        /* Floating Controls */
-        .controls-container { position: fixed; bottom: 100px; left: 25px; z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
-        #admin-toggle { display: none; align-items: center; gap: 8px; background: #64748b; color: white; padding: 12px 20px; border-radius: 50px; font-weight: 800; font-size: 11px; border: none; cursor: pointer; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
-        #admin-toggle.active { background: #ef4444; }
-        #save-btn { display: none; align-items: center; gap: 8px; background: #10b981; color: white; padding: 12px 20px; border-radius: 50px; font-weight: 800; font-size: 11px; border: none; cursor: pointer; box-shadow: 0 10px 15px rgba(16, 185, 129, 0.3); }
-
-        /* Chatbot Style */
-        #chat-widget { position: fixed; bottom: 100px; right: 25px; z-index: 999; width: 280px; }
-        .chat-header { background: #4f46e5; color: white; padding: 10px 14px; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .chat-window { background: white; height: 380px; border: 1px solid #e5e7eb; border-top: none; display: flex; flex-direction: column; border-radius: 0 0 15px 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .chat-messages { flex-grow: 1; padding: 12px; overflow-y: auto; font-size: 11px; display: flex; flex-direction: column; gap: 8px; }
-        .msg { padding: 8px 12px; border-radius: 12px; max-width: 85%; line-height: 1.4; word-wrap: break-word; }
-        .bot-msg { background: #f3f4f6; color: #374151; align-self: flex-start; }
-        .user-msg { background: #4f46e5; color: white; align-self: flex-end; }
-        .chat-input-area { border-top: 1px solid #eee; padding: 10px; display: flex; gap: 6px; }
-        .chat-input-area input { flex-grow: 1; border: 1px solid #e5e7eb; padding: 8px 12px; border-radius: 20px; font-size: 11px; outline: none; }
-        .chat-input-area button { background: #4f46e5; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .chat-list { margin-top: 4px; padding-left: 15px; list-style-type: disc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fdfcf0; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        main { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .slide { display: none; width: 100%; max-width: 800px; }
+        .slide.active { display: flex; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .pastel-card { background: white; border: 1px solid #f1f1f1; box-shadow: 0 4px 20px rgba(0,0,0,0.02); text-align: center; width: 100%; }
+        
+        @media (max-width: 639px) {
+            .pastel-card { padding: 1.5rem; border-radius: 1.5rem; }
+            .text-title { font-size: 1.5rem !important; }
+            #chat-widget { width: 240px; }
+        }
+        @media (min-width: 640px) {
+            .pastel-card { padding: 3rem; border-radius: 2.5rem; }
+            .text-title { font-size: 2.5rem !important; }
+        }
     </style>
 </head>
-<body class="h-screen flex flex-col">
-
-    <header class="h-[70px] bg-white border-b border-slate-100 px-8 flex items-center shrink-0">
-        <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
-            <h1 class="font-extrabold text-lg text-slate-800">Koding Festival <span class="text-indigo-600">2026</span></h1>
-            <div id="slideIndicator" class="text-[10px] font-black text-slate-400 bg-slate-50 px-4 py-2 rounded-full border border-slate-100">Slide 01 / 12</div>
-        </div>
+<body>
+    <header class="h-[60px] bg-white border-b border-slate-100 px-6 flex items-center justify-between shrink-0">
+        <h1 class="font-extrabold text-sm md:text-lg text-slate-800">Koding Festival <span class="text-indigo-600">2026</span></h1>
+        <div id="slideIndicator" class="text-[9px] font-black text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">Slide 01 / 11</div>
     </header>
 
-    <main class="flex-grow relative flex items-center justify-center p-4">
-        
-        <section class="slide active" id="slide-1">
-            <div class="text-center cursor-pointer" onclick="triggerAdminBtn()">
-                <p class="text-indigo-600 font-extrabold text-sm tracking-[0.2em] uppercase mb-1">SMP IT Ummul Quro Depok</p>
-                <div class="inline-block p-4 bg-indigo-50 rounded-3xl mb-4 text-4xl">💰</div>
-                <h2 class="text-4xl font-black text-slate-900 mb-2">Daftar Project</h2>
-                <p class="text-slate-400 font-bold uppercase text-xs tracking-widest text-center">Aplikasi Keuangan & Tabungan</p>
-            </div>
-        </section>
-
-        <section id="groupSlide" class="slide">
+    <main>
+        <section class="slide active" id="slide-intro">
             <div class="pastel-card">
-                <div id="appIconContainer" class="text-4xl mb-4"></div>
-                <h3 id="groupNum" class="text-indigo-600 font-bold text-[10px] uppercase tracking-[0.3em] mb-2" contenteditable="true">Kelompok 01</h3>
-                <h2 id="appName" class="text-3xl font-black text-slate-900 mb-2 tracking-tight uppercase" contenteditable="true">Money Hero</h2>
-                <p id="studentNames" class="text-slate-700 font-bold text-base mb-4" contenteditable="true">Wafi dan Mirza</p>
-                <div class="bg-indigo-50/50 p-3 rounded-2xl">
-                    <p id="appDesc" class="text-slate-500 italic text-xs" contenteditable="true">"Deskripsi..."</p>
-                </div>
-                <p class="text-[9px] text-slate-300 mt-6 font-bold uppercase tracking-wider">
-                    <i class="fa-solid fa-keyboard mr-1"></i> Klik teks di atas untuk mengedit isi slide
-                </p>
+                <p class="text-indigo-600 font-extrabold text-[10px] tracking-widest uppercase mb-2">SMP IT Ummul Quro Depok</p>
+                <div class="text-4xl mb-4">💰</div>
+                <h2 class="text-title font-black text-slate-900 leading-tight">Daftar Project</h2>
+                <p class="text-slate-400 font-bold uppercase text-[9px] mt-2 tracking-widest">Aplikasi Keuangan & Tabungan</p>
             </div>
         </section>
 
-        <section class="slide" id="slide-11">
-            <div class="pastel-card !max-w-2xl !p-8 cursor-pointer" onclick="triggerAdminBtn()">
-                <h2 class="text-2xl font-black mb-1">Format Pengumpulan Project 🚀</h2>
-                <p class="text-[11px] text-slate-400 mb-6 font-bold uppercase tracking-wider">Pastikan semua poin di bawah ini lengkap</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-6">
-                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                        <p class="text-[10px] font-black text-indigo-600 mb-3 uppercase">Isi Folder Pengumpulan:</p>
-                        <ul class="text-[11px] space-y-2 text-slate-600 font-semibold">
-                            <li><i class="fa-solid fa-link mr-1 text-indigo-400"></i> Link Gallery MIT App Inventor</li>
-                            <li><i class="fa-solid fa-video mr-1 text-indigo-400"></i> Video Demo Project</li>
-                            <li><i class="fa-solid fa-user-circle mr-1 text-indigo-400"></i> Foto Profil Peserta</li>
-                            <li><i class="fa-solid fa-file-powerpoint mr-1 text-indigo-400"></i> Pitch Deck (Canva/PPT/Slides)</li>
-                            <li><i class="fa-solid fa-camera mr-1 text-indigo-400"></i> Screenshot Project Exhibition</li>
-                        </ul>
-                    </div>
-                    <div class="flex flex-col gap-4">
-                        <div class="bg-indigo-600 p-5 rounded-2xl text-white text-center">
-                            <p class="text-[9px] font-bold uppercase mb-3 opacity-80">Media Pengumpulan:</p>
-                            <a href="#" target="_blank" class="bg-white text-indigo-600 px-6 py-2 rounded-xl text-[10px] font-black shadow-lg inline-block">BUKA GOOGLE DRIVE</a>
-                        </div>
-                        <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 text-[10px] text-amber-800">
-                            <i class="fa-solid fa-circle-exclamation mr-1"></i> <b>JANGAN LUPA:</b> Deskripsi project wajib di-upload ke <b>LMS</b> masing-masing.
-                        </div>
-                    </div>
+        <section class="slide" id="slide-group">
+            <div class="pastel-card">
+                <div id="groupIcon" class="text-4xl mb-4"></div>
+                <p id="groupNum" class="text-indigo-600 font-extrabold text-[10px] tracking-widest uppercase mb-1"></p>
+                <h2 id="appName" class="text-title font-black text-slate-900 leading-tight uppercase"></h2>
+                <p id="studentNames" class="text-slate-700 font-bold mt-2"></p>
+                <div class="mt-4 bg-indigo-50/50 p-3 rounded-xl">
+                    <p id="appDesc" class="text-slate-500 italic text-[11px]"></p>
                 </div>
             </div>
         </section>
 
-        <section class="slide" id="slide-12">
-            <div class="text-center cursor-pointer" onclick="triggerAdminBtn()">
-                <h2 class="text-4xl font-black text-slate-900">Good Luck!</h2>
-                <p class="text-indigo-600 font-bold italic mt-2">"Semangat Koding Festival!"</p>
+        <section class="slide" id="slide-submit">
+            <div class="pastel-card !text-left">
+                <h2 class="text-xl font-black mb-4">Format Pengumpulan 🚀</h2>
+                <ul class="text-[11px] space-y-3 text-slate-600 font-semibold">
+                    <li><i class="fa-solid fa-link text-indigo-500 mr-2"></i> Link Gallery MIT App Inventor</li>
+                    <li><i class="fa-solid fa-video text-indigo-500 mr-2"></i> Video Demo Project</li>
+                    <li><i class="fa-solid fa-file-ppt text-indigo-500 mr-2"></i> Pitch Deck (Canva/PPT)</li>
+                    <li class="p-3 bg-amber-50 rounded-lg text-amber-800 font-bold text-center">Jangan lupa upload deskripsi ke LMS!</li>
+                </ul>
             </div>
         </section>
-
-        <div class="controls-container">
-            <button id="admin-toggle" onclick="toggleAdminMode()">
-                <i class="fa-solid fa-lock" id="admin-icon"></i> <span id="admin-text">MODE USER (LOCKED)</span>
-            </button>
-            <button id="save-btn" onclick="saveChanges()">
-                <i class="fa-solid fa-floppy-disk"></i> SIMPAN PERUBAHAN
-            </button>
-        </div>
-
-        <div id="chat-widget">
-            <div class="chat-header" onclick="toggleChat()">
-                <span class="text-[10px] font-black uppercase"><i class="fa-solid fa-robot mr-2"></i> Asisten Koding</span>
-                <i id="chat-toggle-icon" class="fa-solid fa-chevron-up text-[9px]"></i>
-            </div>
-            <div id="chat-body" class="chat-window" style="display: none;">
-                <div id="chat-messages" class="chat-messages">
-                    <div class="msg bot-msg">Halo! Ada yang bisa saya bantu terkait format pengumpulan tugas?</div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="userInput" placeholder="Tanya sesuatu..." onkeypress="handleKeyPress(event)">
-                    <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane text-[10px]"></i></button>
-                </div>
-            </div>
-        </div>
     </main>
 
-    <footer class="h-[90px] bg-white border-t border-slate-100 px-8 flex items-center shrink-0">
-        <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
-            <button id="prevBtn" class="font-bold text-slate-300 disabled:opacity-20 uppercase text-xs">PREV</button>
-            <div class="hidden md:block text-[9px] text-slate-300 font-bold uppercase tracking-[0.4em]">SMP IT UMMUL QURO DEPOK</div>
-            <button id="nextBtn" class="font-bold text-indigo-600 uppercase text-xs">NEXT</button>
-        </div>
+    <footer class="h-[70px] bg-white border-t border-slate-100 px-6 flex items-center justify-between shrink-0">
+        <button id="prevBtn" class="font-black text-slate-300 text-[11px] uppercase disabled:opacity-20">PREV</button>
+        <div class="hidden sm:block text-[9px] text-slate-300 font-bold tracking-[0.3em]">UMMUL QURO DEPOK</div>
+        <button id="nextBtn" class="font-black text-indigo-600 text-[11px] uppercase">NEXT</button>
     </footer>
 
+    <div id="chat-widget" class="fixed bottom-[85px] right-4 z-50">
+        <div class="bg-indigo-600 text-white px-4 py-2 rounded-t-xl text-[10px] font-black flex justify-between items-center cursor-pointer" onclick="toggleChat()">
+            <span>ASISTEN AI</span> <i class="fa-solid fa-chevron-up"></i>
+        </div>
+        <div id="chat-body" class="hidden bg-white border border-slate-200 h-[200px] rounded-b-xl shadow-xl p-3 text-[11px]">
+            Halo Ummul Quro! Pastikan semua file sudah masuk ke folder Drive kelompok ya!
+        </div>
+    </div>
+
     <script>
-        let groups = [
-            {n:"Kelompok 1", a:"Money Hero", s:"Wafi dan Mirza", d:"Membantu pelajar mengelola uang", i:"fa-vault", c:"#4f46e5"},
-            {n:"Kelompok 2", a:"Monefy", s:"Nanda dan Milan", d:"Untuk mencatat pengeluaran", i:"fa-file-invoice-dollar", c:"#10b981"},
-            {n:"Kelompok 3", a:"Envelopia", s:"Ezhar dan Khalid", d:"Mengontrol per-katagori", i:"fa-envelope-open-text", c:"#f59e0b"},
-            {n:"Kelompok 4", a:"My Tabungan", s:"Rakha dan Ashkii", d:"Menghitung estimasi menabung", i:"fa-calculator", c:"#ec4899"},
-            {n:"Kelompok 5", a:"My Celengan", s:"Danish", d:"Untuk mencatat tabungan", i:"fa-piggy-bank", c:"#8b5cf6"},
-            {n:"Kelompok 6", a:"Finance Notes", s:"Alvin dan Lutfi", d:"Untuk mencatat pengeluaran", i:"fa-notes-medical", c:"#06b6d4"},
-            {n:"Kelompok 7", a:"Business Control", s:"Rafa dan Arya", d:"Menghitung modal usaha", i:"fa-chart-line", c:"#f43f5e"},
-            {n:"Kelompok 8", a:"Bank Nugraha", s:"Navra dan Izzan", d:"Aplikasi perbankan", i:"fa-building-columns", c:"#1e293b"},
-            {n:"Kelompok 9", a:"Bank Farhan Mumtaz", s:"Farhan dan Ziyad", d:"Aplikasi perbankan", i:"fa-wallet", c:"#10b981"}
+        const groups = [
+            {n:"Kelompok 1", a:"Money Hero", s:"Wafi dan Mirza", d:"Membantu pelajar mengelola uang", i:"fa-vault"},
+            {n:"Kelompok 2", a:"Monefy", s:"Nanda dan Milan", d:"Untuk mencatat pengeluaran", i:"fa-file-invoice-dollar"},
+            {n:"Kelompok 3", a:"Envelopia", s:"Ezhar dan Khalid", d:"Mengontrol pengeluaran per-kategori", i:"fa-envelope-open-text"},
+            {n:"Kelompok 4", a:"My Tabungan", s:"Rakha dan Ashkii", d:"Menghitung estimasi menabung", i:"fa-calculator"},
+            {n:"Kelompok 5", a:"My Celengan", s:"Danish", d:"Untuk mencatat tabungan harian", i:"fa-piggy-bank"},
+            {n:"Kelompok 6", a:"Finance Notes", s:"Alvin dan Lutfi", d:"Untuk mencatat pengeluaran", i:"fa-notes-medical"},
+            {n:"Kelompok 7", a:"Business Control", s:"Rafa dan Arya", d:"Menghitung modal usaha sederhana", i:"fa-chart-line"},
+            {n:"Kelompok 8", a:"Bank Nugraha", s:"Navra dan Izzan", d:"Aplikasi perbankan sederhana", i:"fa-building-columns"},
+            {n:"Kelompok 9", a:"Bank Farhan Mumtaz", s:"Farhan dan Ziyad", d:"Aplikasi manajemen uang personal", i:"fa-wallet"}
         ];
 
-        let currentSlide = 0;
-        let isAdmin = false;
-        const totalSlidesCount = 12;
-
-        function triggerAdminBtn() {
-            document.getElementById('admin-toggle').style.display = 'flex';
-        }
-
-        function toggleAdminMode() {
-            if (!isAdmin) {
-                const pass = prompt("Masukkan Password Admin:");
-                if (pass === "admin123") {
-                    isAdmin = true;
-                    alert("Mode Admin Aktif.");
-                } else {
-                    alert("Password Salah!");
-                    return;
-                }
-            } else {
-                isAdmin = false;
-                document.getElementById('admin-toggle').style.display = 'none';
-            }
-            applyAdminState();
-        }
-
-        function applyAdminState() {
-            const targets = document.querySelectorAll('#slide-1 p, #slide-1 h2, #slide-11 h2, #slide-11 p, #slide-12 h2, #slide-12 p, #slide-11 ul, #slide-11 li');
-            const btn = document.getElementById('admin-toggle');
-            const icon = document.getElementById('admin-icon');
-            const text = document.getElementById('admin-text');
-            
-            if (isAdmin) {
-                btn.classList.add('active');
-                icon.className = "fa-solid fa-lock-open";
-                text.innerText = "MODE ADMIN (UNLOCKED)";
-                targets.forEach(el => el.setAttribute('contenteditable', 'true'));
-            } else {
-                btn.classList.remove('active');
-                icon.className = "fa-solid fa-lock";
-                text.innerText = "MODE USER (LOCKED)";
-                targets.forEach(el => el.removeAttribute('contenteditable'));
-            }
-        }
-
-        document.addEventListener('input', (e) => {
-            if (e.target.hasAttribute('contenteditable') && currentSlide >= 1 && currentSlide <= 9) {
-                document.getElementById('save-btn').style.display = 'flex';
-            }
-        });
-
-        function saveChanges() {
-            if (currentSlide >= 1 && currentSlide <= 9) {
-                const i = currentSlide - 1;
-                groups[i].n = document.getElementById('groupNum').innerText;
-                groups[i].a = document.getElementById('appName').innerText;
-                groups[i].s = document.getElementById('studentNames').innerText;
-                groups[i].d = document.getElementById('appDesc').innerText.replace(/"/g, '');
-            }
-            alert("Perubahan disimpan sementara.");
-            document.getElementById('save-btn').style.display = 'none';
-        }
-
-        function updateSlide() {
-            const slides = [document.getElementById('slide-1'), document.getElementById('groupSlide'), document.getElementById('slide-11'), document.getElementById('slide-12')];
-            slides.forEach(s => s.classList.remove('active'));
-
-            if (currentSlide === 0) slides[0].classList.add('active');
-            else if (currentSlide >= 1 && currentSlide <= 9) {
-                const g = groups[currentSlide - 1];
+        let current = 0;
+        function update() {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            if (current === 0) {
+                document.getElementById('slide-intro').classList.add('active');
+            } else if (current > 0 && current <= groups.length) {
+                const g = groups[current-1];
                 document.getElementById('groupNum').innerText = g.n;
                 document.getElementById('appName').innerText = g.a;
                 document.getElementById('studentNames').innerText = g.s;
                 document.getElementById('appDesc').innerText = `"${g.d}"`;
-                document.getElementById('appIconContainer').innerHTML = `<i class="fa-solid ${g.i}" style="color: ${g.c}"></i>`;
-                slides[1].classList.add('active');
+                document.getElementById('groupIcon').innerHTML = `<i class="fa-solid ${g.i} text-indigo-500"></i>`;
+                document.getElementById('slide-group').classList.add('active');
+            } else {
+                document.getElementById('slide-submit').classList.add('active');
             }
-            else if (currentSlide === 10) slides[2].classList.add('active');
-            else slides[3].classList.add('active');
-
-            document.getElementById('admin-toggle').style.display = 'none';
-            document.getElementById('save-btn').style.display = 'none';
-            document.getElementById('prevBtn').disabled = currentSlide === 0;
-            document.getElementById('nextBtn').disabled = currentSlide === totalSlidesCount - 1;
-            document.getElementById('slideIndicator').innerText = `Slide ${(currentSlide + 1).toString().padStart(2, '0')} / 12`;
-            
-            if(isAdmin) applyAdminState(); 
+            document.getElementById('slideIndicator').innerText = `Slide ${(current + 1).toString().padStart(2, '0')} / 11`;
+            document.getElementById('prevBtn').disabled = current === 0;
+            document.getElementById('nextBtn').disabled = current >= groups.length + 1;
         }
 
-        document.getElementById('nextBtn').addEventListener('click', () => { currentSlide++; updateSlide(); });
-        document.getElementById('prevBtn').addEventListener('click', () => { currentSlide--; updateSlide(); });
-
-        function toggleChat() {
-            const b = document.getElementById('chat-body');
-            b.style.display = b.style.display === "none" ? "flex" : "none";
-        }
-
-        function handleKeyPress(e) { if(e.key === 'Enter') sendMessage(); }
-
-        function sendMessage() {
-            const i = document.getElementById('userInput');
-            const m = i.value.trim();
-            if(!m) return;
-            addMessage(m, 'user-msg', false);
-            i.value = '';
-            setTimeout(() => {
-                const low = m.toLowerCase();
-                let res = "Maaf, saya hanya bisa menjawab pertanyaan seputar pengumpulan tugas Koding Festival.";
-                let html = false;
-                
-                if(low.includes("tugas") || low.includes("kumpul") || low.includes("format") || low.includes("isi")) {
-                    res = `<b>Format pengumpulan project:</b>
-                        <ul class="chat-list">
-                            <li>Link Gallery MIT App Inventor</li>
-                            <li>Video Demo Project</li>
-                            <li>Foto Profil Peserta</li>
-                            <li>Pitch Deck (Canva/PPT/Slides)</li>
-                            <li>Screenshot untuk Exhibition</li>
-                        </ul><br>
-                        <b>PENTING:</b> Deskripsi project wajib di-upload ke <b>LMS</b> dan pastikan akses Drive sudah dibuka!`;
-                    html = true;
-                } else if(low.includes("halo")) res = "Halo! Ada yang bisa saya bantu terkait format pengumpulan?";
-                
-                addMessage(res, 'bot-msg', html);
-            }, 500);
-        }
-
-        function addMessage(c, cl, h) {
-            const container = document.getElementById('chat-messages');
-            const d = document.createElement('div');
-            d.className = `msg ${cl}`;
-            h ? d.innerHTML = c : d.innerText = c;
-            container.appendChild(d);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        updateSlide();
+        document.getElementById('nextBtn').onclick = () => { current++; update(); };
+        document.getElementById('prevBtn').onclick = () => { current--; update(); };
+        function toggleChat() { document.getElementById('chat-body').classList.toggle('hidden'); }
+        update();
     </script>
 </body>
 </html>
